@@ -20,8 +20,7 @@ const genServer = (x: number, id: number) => {
     {
       id: `s${id + 1}`,
       data: { label: `Server ${id + 1}` },
-      position: { x: x, y: 100 },
-      ...defaultNodeOptions,
+      position: { x: x - 42.5, y: 100 },
     },
   ]
 
@@ -54,6 +53,9 @@ const genServer = (x: number, id: number) => {
           data: { label: `Worker w${id * 50 + (i == 3 ? 49 : i) + 1}` },
           position: { x: x - 112.5 + 75 * i, y: 200 },
           ...defaultNodeOptions,
+          ...(id == 0
+            ? { style: { ...defaultNodeOptions.style, padding: '10px' } }
+            : {}),
         },
         {
           id: `w${id * 50 + (i == 3 ? 49 : i) + 1}s`,
@@ -64,6 +66,12 @@ const genServer = (x: number, id: number) => {
           },
           position: { x: x - 112.5 + 75 * i, y: 300 },
           ...defaultNodeOptions,
+          ...(id == 0 && i != 3
+            ? { style: { ...defaultNodeOptions.style, padding: '10px' } }
+            : {}),
+          ...(id == 1 || (id == 0 && i == 3)
+            ? { style: { ...defaultNodeOptions.style, padding: '10px 5px' } }
+            : {}),
         },
       ],
     )
@@ -76,9 +84,8 @@ const nodes = [
   {
     id: 'gwm',
     data: { label: 'Gateway Manager' },
-    position: { x: 0, y: 0 },
+    position: { x: -42.5, y: 0 },
     type: 'input',
-    ...defaultNodeOptions,
   },
   ...genServer(-300, 0),
   ...genServer(0, 1),
@@ -86,7 +93,7 @@ const nodes = [
   {
     id: 'baseLineNodeText-6',
     type: 'baseLineNodeText',
-    position: { x: -20, y: 100 },
+    position: { x: -15, y: 100 },
     data: {
       label: '...............',
     },
