@@ -2,6 +2,12 @@
 sidebar_position: 4
 sidebar_label: Step 3 - Gateway
 ---
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import FlowChart from '@site/src/components/bigbotguide/GatewayFlowChart'
+
+<BrowserOnly>
+  {() => <FlowChart />}
+</BrowserOnly>
 
 # Standalone Gateway
 
