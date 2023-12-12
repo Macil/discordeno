@@ -1,5 +1,11 @@
 import React from 'react'
-import ReactFlow, { Background, Controls, Edge, Position } from 'reactflow'
+import ReactFlow, {
+  Background,
+  Controls,
+  Edge,
+  Node,
+  Position,
+} from 'reactflow'
 import 'reactflow/dist/style.css'
 
 export const defaultNodeOptions = {
@@ -10,33 +16,53 @@ export const defaultNodeOptions = {
 }
 
 const genServer = (x: number, id: number) => {
-  const server = [
+  const server: Node<any, string>[] = [
     {
       id: `s${id + 1}`,
-      data: { label: `Server ${id}` },
+      data: { label: `Server ${id + 1}` },
       position: { x: x, y: 100 },
       ...defaultNodeOptions,
     },
   ]
 
-  for (let i = 0; i < 3; i++) {
-    console.log(i == 2 ? i : 50)
+  for (let i = 0; i < 4; i++) {
+    if (i == 2) {
+      server.push(
+        {
+          id: `baseLineNodeText-${id}-${i}`,
+          type: 'baseLineNodeText',
+          position: { x: x - 130, y: 307.5 },
+          data: {
+            label: '.....',
+          },
+        },
+        {
+          id: `baseLineNodeText-${id}-${i}s`,
+          type: 'baseLineNodeText',
+          position: { x: x - 130, y: 207.5 },
+          data: {
+            label: '.....',
+          },
+        },
+      )
+      continue
+    }
     server.push(
       ...[
         {
-          id: `w${id * 50 + (i == 2 ? 49 : i) + 1}`,
-          data: { label: `Worker w${id * 50 + (i == 2 ? 49 : i) + 1}` },
-          position: { x: x - 75 + 75 * i, y: 200 },
+          id: `w${id * 50 + (i == 3 ? 49 : i) + 1}`,
+          data: { label: `Worker w${id * 50 + (i == 3 ? 49 : i) + 1}` },
+          position: { x: x - 112.5 + 75 * i, y: 200 },
           ...defaultNodeOptions,
         },
         {
-          id: `w${id * 50 + (i == 2 ? 49 : i) + 1}s`,
+          id: `w${id * 50 + (i == 3 ? 49 : i) + 1}s`,
           data: {
-            label: `Shard ${id * 500 + (i == 2 ? 49 : i) * 10}-${
-              id * 500 + (i == 2 ? 49 : i) * 10 + 9
+            label: `Shard ${id * 500 + (i == 3 ? 49 : i) * 10}-${
+              id * 500 + (i == 3 ? 49 : i) * 10 + 9
             }`,
           },
-          position: { x: x - 75 + 75 * i, y: 300 },
+          position: { x: x - 112.5 + 75 * i, y: 300 },
           ...defaultNodeOptions,
         },
       ],
@@ -54,13 +80,13 @@ const nodes = [
     type: 'input',
     ...defaultNodeOptions,
   },
-  ...genServer(-250, 0),
+  ...genServer(-300, 0),
   ...genServer(0, 1),
-  ...genServer(250, 9),
+  ...genServer(300, 9),
   {
     id: 'baseLineNodeText-6',
     type: 'baseLineNodeText',
-    position: { x: -40, y: 100 },
+    position: { x: -20, y: 100 },
     data: {
       label: '...............',
     },
