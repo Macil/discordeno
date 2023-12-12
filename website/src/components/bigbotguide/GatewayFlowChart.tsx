@@ -12,7 +12,7 @@ export const defaultNodeOptions = {
   targetPosition: Position.Top,
   sourcePosition: Position.Bottom,
   draggable: false,
-  style: { width: '65px', height: '50px', padding: '10px 0' },
+  style: { width: '70px', height: '50px', padding: '10px 0' },
 }
 
 const genServer = (x: number, id: number) => {
@@ -38,7 +38,7 @@ const genServer = (x: number, id: number) => {
         {
           id: `baseLineNodeText-${id}-${i}s`,
           type: 'baseLineNodeText',
-          position: { x: x - 130, y: 207.5 },
+          position: { x: x - 130, y: 200 },
           data: {
             label: '.....',
           },
@@ -50,12 +50,10 @@ const genServer = (x: number, id: number) => {
       ...[
         {
           id: `w${id * 50 + (i == 3 ? 49 : i) + 1}`,
-          data: { label: `Worker w${id * 50 + (i == 3 ? 49 : i) + 1}` },
+          data: { label: `Worker ${id * 50 + (i == 3 ? 49 : i) + 1}` },
           position: { x: x - 112.5 + 75 * i, y: 200 },
           ...defaultNodeOptions,
-          ...(id == 0
-            ? { style: { ...defaultNodeOptions.style, padding: '10px' } }
-            : {}),
+          ...{ style: { ...defaultNodeOptions.style, height: '40px' } },
         },
         {
           id: `w${id * 50 + (i == 3 ? 49 : i) + 1}s`,
@@ -65,13 +63,17 @@ const genServer = (x: number, id: number) => {
             }`,
           },
           position: { x: x - 112.5 + 75 * i, y: 300 },
+          type: 'output',
           ...defaultNodeOptions,
-          ...(id == 0 && i != 3
-            ? { style: { ...defaultNodeOptions.style, padding: '10px' } }
-            : {}),
-          ...(id == 1 || (id == 0 && i == 3)
-            ? { style: { ...defaultNodeOptions.style, padding: '10px 5px' } }
-            : {}),
+          ...{
+            style: {
+              ...defaultNodeOptions.style,
+              ...(id == 1 || (id == 0 && i == 3)
+                ? { padding: '10px 10px' }
+                : { padding: `10px 5px` }),
+              ...(id == 0 && i != 3 ? { padding: '10px 15px' } : {}),
+            },
+          },
         },
       ],
     )
