@@ -53,7 +53,7 @@ const genServer = (x: number, id: number) => {
           data: { label: `Worker ${id * 50 + (i == 3 ? 49 : i) + 1}` },
           position: { x: x - 112.5 + 75 * i, y: 200 },
           ...defaultNodeOptions,
-          ...{ style: { ...defaultNodeOptions.style, height: '40px' } },
+          ...{ style: { ...defaultNodeOptions.style, padding: '5px 10px' } },
         },
         {
           id: `w${id * 50 + (i == 3 ? 49 : i) + 1}s`,
@@ -69,9 +69,9 @@ const genServer = (x: number, id: number) => {
             style: {
               ...defaultNodeOptions.style,
               ...(id == 1 || (id == 0 && i == 3)
-                ? { padding: '10px 10px' }
-                : { padding: `10px 5px` }),
-              ...(id == 0 && i != 3 ? { padding: '10px 15px' } : {}),
+                ? { padding: '5px 10px' }
+                : { padding: `5px 5px` }),
+              ...(id == 0 && i != 3 ? { padding: '5px 15px' } : {}),
             },
           },
         },
