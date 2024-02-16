@@ -177,7 +177,7 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
       },
       name: { type: 'string' },
-      value: { type: 'string | number' },
+      value: { type: ['string', 'number'] },
     },
   },
   applicationCommandPermission: {
@@ -260,15 +260,124 @@ const transformers: Record<string, TransformerInformation> = {
       changes: {
         type: {
           new: {
-            type: 'string | number | bigint | boolean | Array<{ allow?: string; deny?: string; id: string; type: import("@discordeno/types").OverwriteTypes; }> | Array<{ id?: bigint; name?: string; }>',
+            type: [
+              'string',
+              'number',
+              'bigint',
+              'boolean',
+              {
+                type: {
+                  allow: { type: 'string', optional: true },
+                  deny: { type: 'string', optional: true },
+                  id: { type: 'string' },
+                  type: { type: 'import("@discordeno/types").OverwriteTypes', optional: true },
+                },
+                array: true,
+              },
+              {
+                type: {
+                  id: { type: 'bigint', optional: true },
+                  name: { type: 'string', optional: true },
+                },
+                array: true,
+              },
+            ],
             optional: true,
           },
           old: {
-            type: 'string | number | bigint | boolean | Array<{ allow?: string; deny?: string; id: string; type: import("@discordeno/types").OverwriteTypes; }> | Array<{ id?: bigint; name?: string; }>',
+            type: [
+              'string',
+              'number',
+              'bigint',
+              'boolean',
+              {
+                type: {
+                  allow: { type: 'string', optional: true },
+                  deny: { type: 'string', optional: true },
+                  id: { type: 'string' },
+                  type: { type: 'import("@discordeno/types").OverwriteTypes', optional: true },
+                },
+                array: true,
+              },
+              {
+                type: {
+                  id: { type: 'bigint', optional: true },
+                  name: { type: 'string', optional: true },
+                },
+                array: true,
+              },
+            ],
             optional: true,
           },
           key: {
-            type: '"id" | "name" | "description" | "type" | "permissions" | "locked" | "invitable" | "nsfw" | "archived" | "position" | "topic" | "bitrate" | "default_auto_archive_duration" | "auto_archive_duration" | "allow" | "deny" | "channel_id" | "deaf" | "mute" | "status" | "nick" | "communication_disabled_until" | "color" | "permission_overwrites" | "user_limit" | "rate_limit_per_user" | "owner_id" | "application_id" | "hoist" | "mentionable" | "location" | "verification_level" | "default_message_notifications" | "explicit_content_filter" | "preferred_locale" | "afk_timeout" | "afk_channel_id" | "system_channel_id" | "widget_enabled" | "mfa_level" | "vanity_url_code" | "icon_hash" | "widget_channel_id" | "rules_channel_id" | "public_updates_channel_id" | "code" | "region" | "privacy_level" | "entity_type" | "enable_emoticons" | "expire_behavior" | "expire_grace_period" | "uses" | "max_uses" | "max_age" | "temporary" | "discovery_splash_hash" | "banner_hash" | "image_hash" | "splash_hash" | "inviter_id" | "avatar_hash" | "command_id" | "prune_delete_days" | "$add" | "$remove"',
+            type: [
+              '"id"',
+              '"name"',
+              '"description"',
+              '"type"',
+              '"permissions"',
+              '"locked"',
+              '"invitable"',
+              '"nsfw"',
+              '"archived"',
+              '"position"',
+              '"topic"',
+              '"bitrate"',
+              '"default_auto_archive_duration"',
+              '"auto_archive_duration"',
+              '"allow"',
+              '"deny"',
+              '"channel_id"',
+              '"deaf"',
+              '"mute"',
+              '"status"',
+              '"nick"',
+              '"communication_disabled_until"',
+              '"color"',
+              '"permission_overwrites"',
+              '"user_limit"',
+              '"rate_limit_per_user"',
+              '"owner_id"',
+              '"application_id"',
+              '"hoist"',
+              '"mentionable"',
+              '"location"',
+              '"verification_level"',
+              '"default_message_notifications"',
+              '"explicit_content_filter"',
+              '"preferred_locale"',
+              '"afk_timeout"',
+              '"afk_channel_id"',
+              '"system_channel_id"',
+              '"widget_enabled"',
+              '"mfa_level"',
+              '"vanity_url_code"',
+              '"icon_hash"',
+              '"widget_channel_id"',
+              '"rules_channel_id"',
+              '"public_updates_channel_id"',
+              '"code"',
+              '"region"',
+              '"privacy_level"',
+              '"entity_type"',
+              '"enable_emoticons"',
+              '"expire_behavior"',
+              '"expire_grace_period"',
+              '"uses"',
+              '"max_uses"',
+              '"max_age"',
+              '"temporary"',
+              '"discovery_splash_hash"',
+              '"banner_hash"',
+              '"image_hash"',
+              '"splash_hash"',
+              '"inviter_id"',
+              '"avatar_hash"',
+              '"command_id"',
+              '"prune_delete_days"',
+              '"$add"',
+              '"$remove"',
+            ],
           },
         },
         optional: true,
@@ -472,7 +581,7 @@ const transformers: Record<string, TransformerInformation> = {
             comment: 'Timestamp when the thread was created; only populated for threads created after 2022-01-09',
           },
           autoArchiveDuration: {
-            type: '60 | 1440 | 4320 | 10080',
+            type: ['60', '1440', '4320', '10080'],
             comment: 'Duration in minutes to automatically archive the thread after recent activity',
           },
         },
@@ -527,7 +636,7 @@ const transformers: Record<string, TransformerInformation> = {
             comment: 'Timestamp when the thread was created; only populated for threads created after 2022-01-09',
           },
           autoArchiveDuration: {
-            type: '60 | 1440 | 4320 | 10080',
+            type: ['60', '1440', '4320', '10080'],
             optional: true,
             comment: 'Duration in minutes to automatically archive the thread after recent activity',
           },
@@ -593,7 +702,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: 'whether the component is disabled, default false',
       },
       style: {
-        type: 'import("@discordeno/types").ButtonStyles | import("@discordeno/types").TextStyles',
+        type: ['import("@discordeno/types").ButtonStyles', 'import("@discordeno/types").TextStyles'],
         optional: true,
         comment: 'For different styles/colors of the buttons',
       },
@@ -843,7 +952,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: 'Guild name (2-100 characters, excluding trailing and leading whitespace)',
       },
       owner: {
-        type: 'boolean | undefined',
+        type: ['boolean', 'undefined'],
         comment: 'True if the user is the owner of the guild',
       },
       afkTimeout: { type: 'number', comment: 'Afk timeout in seconds' },
@@ -1086,7 +1195,7 @@ const transformers: Record<string, TransformerInformation> = {
       id: { type: 'bigint' },
       name: { type: 'string' },
       guildId: { type: 'bigint' },
-      type: { type: '"twitch" | "youtube" | "discord"' },
+      type: { type: ['"twitch"', '"youtube"', '"discord"'] },
       account: { type: { id: { type: 'bigint' }, name: { type: 'string' } } },
       scopes: { type: 'import("@discordeno/types").OAuth2Scope', array: true },
     },
@@ -1242,7 +1351,7 @@ const transformers: Record<string, TransformerInformation> = {
       type: {
         type: 'import("@discordeno/types").ApplicationCommandOptionTypes',
       },
-      value: { type: 'string | number | boolean', optional: true },
+      value: { type: ['string', 'number', 'boolean'], optional: true },
       options: { type: 'InteractionDataOption', optional: true, array: true },
       focused: { type: 'boolean', optional: true },
     },
@@ -1582,7 +1691,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: 'Data showing the source of a crossposted channel follow add, pin or reply message',
       },
       nonce: {
-        type: 'string | number',
+        type: ['string', 'number'],
         optional: true,
         comment: 'Used for validating a message was sent',
       },
@@ -1720,7 +1829,7 @@ const transformers: Record<string, TransformerInformation> = {
       emoji: { type: 'Emoji', comment: 'Emoji of the option' },
       title: { type: 'string', comment: 'Title of the option' },
       description: {
-        type: 'string | undefined',
+        type: ['string', 'undefined'],
         comment: 'Description of the option',
       },
     },
@@ -2049,7 +2158,7 @@ const transformers: Record<string, TransformerInformation> = {
   team: {
     name: 'Team',
     proprieties: {
-      icon: { type: 'bigint | undefined', optional: true },
+      icon: { type: ['bigint', 'undefined'], optional: true },
       id: { type: 'bigint' },
       name: { type: 'string' },
       ownerUserId: { type: 'bigint' },
@@ -2067,7 +2176,7 @@ const transformers: Record<string, TransformerInformation> = {
   template: {
     name: 'Template',
     proprieties: {
-      description: { type: 'string | null', optional: true },
+      description: { type: ['string', 'null'], optional: true },
       isDirty: { type: 'boolean', optional: true },
       name: { type: 'string' },
       creatorId: { type: 'bigint' },
@@ -2312,15 +2421,22 @@ const transformers: Record<string, TransformerInformation> = {
 
 export default transformers
 
+/** @internal */
 export interface TransformerInformation {
   name: string
-  proprieties: Record<
-    string,
-    {
-      type: string | TransformerInformation['proprieties']
-      comment?: string
-      optional?: boolean
-      array?: boolean
-    }
-  >
+  proprieties: Record<string, TransformerObjectProprieties>
+}
+
+/** @internal */
+export interface TransformerObjectProprieties {
+  type: string | Record<string, TransformerObjectProprieties> | Array<string | TransformerUnionTypes>
+  comment?: string
+  optional?: boolean
+  array?: boolean
+}
+
+/** @internal */
+export interface TransformerUnionTypes {
+  type: string | Record<string, TransformerObjectProprieties>
+  array?: boolean
 }
