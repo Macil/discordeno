@@ -46,17 +46,9 @@ function parseProprietyType(prop: TransformerObjectProprieties['type'] | Transfo
 
   for (const [propName, prop] of Object.entries(proprieties)) {
     if (prop.comment) {
-      result += `${spaces}/**\n`
-      const splittedComment = prop.comment.split('\n')
+      const commentLines = prop.comment.reduce((prev, cur) => `${prev}${spaces} * ${cur}\n`, '')
 
-      if (splittedComment.at(0) === '') splittedComment.shift()
-      if (splittedComment.at(-1) === '') splittedComment.pop()
-
-      for (const commentLine of splittedComment) {
-        result += `${spaces} * ${commentLine}\n`
-      }
-
-      result += `${spaces} */\n`
+      result += `${spaces}/**\n${commentLines}${spaces} */\n`
     }
 
     const type = prop.array ? `Array<${parseProprietyType(prop.type, intent + 2)}>` : parseProprietyType(prop.type, intent + 2)
