@@ -3308,6 +3308,8 @@ export interface TransformerInformation {
   name: string
   /** The proprieties that the interface is composed of */
   proprieties: Record<string, TransformerObjectProprieties>
+  /** Comment for the transformer type */
+  comment?: string[]
 }
 
 /** @internal */
