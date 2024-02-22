@@ -3140,7 +3140,6 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'bigint',
       },
     },
-    withoutDesiredProprietySupport: true,
   },
   webhook: {
     name: 'Webhook',
