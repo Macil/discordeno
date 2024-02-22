@@ -3,7 +3,7 @@ import { Collection, iconHashToBigInt } from '@discordeno/utils'
 import type { Bot, Guild } from '../index.js'
 import { GuildToggles } from './toggles/guild.js'
 
-const baseGuild = {
+const baseGuild: Partial<Guild> = {
   get threads() {
     if (!this.channels) return
 
@@ -13,7 +13,7 @@ const baseGuild = {
 
     return new Collection(threads.map((x) => [x.id, x]))
   },
-} as Guild
+}
 
 export function transformGuild(bot: Bot, payload: { guild: DiscordGuild } & { shardId: number }): Guild {
   const guildId = bot.transformers.snowflake(payload.guild.id)

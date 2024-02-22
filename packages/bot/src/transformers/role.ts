@@ -3,7 +3,7 @@ import { iconHashToBigInt, type Bot, type Role } from '../index.js'
 import { Permissions } from './toggles/Permissions.js'
 import { RoleToggles } from './toggles/role.js'
 
-const baseRole: Partial<Role> = {
+const baseRole: Partial<Role & InternalRole> = {
   get tags() {
     return {
       botId: this.internalTags?.botId,
@@ -41,7 +41,7 @@ const baseRole: Partial<Role> = {
 }
 
 export function transformRole(bot: Bot, payload: { role: DiscordRole } & { guildId: BigString }): Role {
-  const role: Role = Object.create(baseRole)
+  const role: Role & InternalRole = Object.create(baseRole)
   const props = bot.transformers.desiredProperties.role
   if (props.id && payload.role.id) role.id = bot.transformers.snowflake(payload.role.id)
   if (props.name && payload.role.name) role.name = payload.role.name
@@ -65,4 +65,12 @@ export function transformRole(bot: Bot, payload: { role: DiscordRole } & { guild
   }
 
   return bot.transformers.customizers.role(bot, payload.role, role)
+}
+
+interface InternalRole {
+  internalTags: {
+    botId?: bigint
+    integrationId?: bigint
+    subscriptionListingId?: bigint
+  }
 }

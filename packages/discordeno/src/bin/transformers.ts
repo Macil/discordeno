@@ -115,6 +115,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'number',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   application: {
     name: 'Application',
@@ -204,6 +205,7 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   applicationCommand: {
     name: 'ApplicationCommand',
@@ -254,6 +256,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'boolean',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   applicationCommandOption: {
     name: 'ApplicationCommandOption',
@@ -329,6 +332,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['if autocomplete interactions are enabled for this `String`, `Integer`, or `Number` type option'],
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   applicationCOmmandOptionChoice: {
     name: 'ApplicationCommandOptionChoice',
@@ -344,6 +348,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: ['string', 'number'],
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   applicationCommandPermission: {
     name: 'ApplicationCommandPermission',
@@ -372,6 +377,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   attachment: {
     name: 'Attachment',
@@ -665,6 +671,7 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   autoModerationActionExecution: {
     name: 'AutoModerationActionExecution',
@@ -726,6 +733,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'string',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   autoModerationRule: {
     name: 'AutoModerationRule',
@@ -813,6 +821,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   channel: {
     name: 'Channel',
@@ -822,8 +831,9 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['The id of the channel'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").ChannelToggles',
+        type: 'import("../index.js").ChannelToggles',
         comment: ['The compressed form of all the boolean values on this channel.'],
+        alwaysPresent: true,
       },
       type: {
         type: 'import("@discordeno/types").ChannelTypes',
@@ -908,29 +918,6 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
         comment: ['An approximate count of users in a thread, stops counting at 50'],
       },
-      internalThreadMetadata: {
-        type: {
-          archiveTimestamp: {
-            type: 'number',
-            comment: ["Timestamp when the thread's archive status was last changed, used for calculating recent activity"],
-          },
-          createTimestamp: {
-            type: 'number',
-            optional: true,
-            comment: ['Timestamp when the thread was created; only populated for threads created after 2022-01-09'],
-          },
-          autoArchiveDuration: {
-            type: ['60', '1440', '4320', '10080'],
-            comment: ['Duration in minutes to automatically archive the thread after recent activity'],
-          },
-        },
-        optional: true,
-        comment: [
-          'Thread-specific fields not needed by other channels.',
-          '@deprecated Use channel.threadMetadata',
-          '@private This field is an internal field, subject to breaking changes.',
-        ],
-      },
       member: {
         type: 'import("@discordeno/types").DiscordThreadMember',
         optional: true,
@@ -944,7 +931,7 @@ const transformers: Record<string, TransformerInformation> = {
         ],
       },
       permissions: {
-        type: 'import("@discordeno/bot").Permissions',
+        type: 'import("../index.js").Permissions',
         optional: true,
         comment: [
           'computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction. This does not include implicit permissions, which may need to be checked separately.',
@@ -955,19 +942,10 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
         comment: ['The flags of the channel'],
       },
-      internalOverwrites: {
-        type: 'bigint',
-        optional: true,
-        array: true,
-        comment: [
-          'Explicit permission overwrites for members and roles',
-          '@deprecated Use channel.permissionOverwrites',
-          '@private This is for internal use only, and prone to breaking changes.',
-        ],
-      },
       nsfw: {
         type: 'boolean',
         comment: ['Whether the channel is nsfw'],
+        alwaysPresent: true,
       },
       threadMetadata: {
         type: {
@@ -1003,23 +981,32 @@ const transformers: Record<string, TransformerInformation> = {
           },
         },
         optional: true,
-        comment: ['Thread-specific fields not needed by other channels'],
+        comment: [
+          'Thread-specific fields not needed by other channels',
+          '@remarks',
+          'Some of the proprieties, in the specific `archiveTimestamp`, `createTimestamp` and `autoArchiveDuration`, need to be explicitly enabled the following desired proprieties',
+        ],
+        alwaysPresent: true,
       },
       newlyCreated: {
         type: 'boolean',
         comment: ['When a thread is created this will be true on that channel payload for the thread.'],
+        alwaysPresent: true,
       },
       locked: {
         type: 'boolean',
         comment: ['When a thread is locked, only users with `MANAGE_THREADS` can unarchive it'],
+        alwaysPresent: true,
       },
       invitable: {
         type: 'boolean',
         comment: ['whether non-moderators can add other non-moderators to a thread; only available on private threads'],
+        alwaysPresent: true,
       },
       archived: {
         type: 'boolean',
         comment: ['Whether the thread is archived'],
+        alwaysPresent: true,
       },
       permissionOverwrites: {
         type: 'import("@discordeno/types").OverwriteReadable',
@@ -1135,6 +1122,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['a list of child components'],
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   embed: {
     name: 'Embed',
@@ -1290,6 +1278,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   emoji: {
     name: 'Emoji',
@@ -1336,7 +1325,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['Whether this emoji can be used, may be false due to loss of Server Boosts'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").EmojiToggles',
+        type: 'import("../index.js").EmojiToggles',
       },
     },
   },
@@ -1411,6 +1400,7 @@ const transformers: Record<string, TransformerInformation> = {
         },
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   guild: {
     name: 'Guild',
@@ -1492,7 +1482,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['The description of a guild'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").GuildToggles',
+        type: 'import("../index.js").GuildToggles',
       },
       shardId: {
         type: 'number',
@@ -1619,6 +1609,7 @@ const transformers: Record<string, TransformerInformation> = {
       threads: {
         type: 'import("@discordeno/utils").Collection<bigint, Channel>',
         comment: ['All active threads in the guild that the current user has permission to view'],
+        dependencies: ['channels'],
       },
       presences: {
         type: 'PresenceUpdate',
@@ -1755,17 +1746,20 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   interaction: {
     name: 'Interaction',
     proprieties: {
       bot: {
-        type: 'import("@discordeno/bot").Bot',
+        type: 'import("../index.js").Bot',
         comment: ['The bot object'],
+        alwaysPresent: true,
       },
       acknowledged: {
         type: 'boolean',
         comment: ['Whether or not this interaction has been responded to.'],
+        alwaysPresent: true,
       },
       id: {
         type: 'bigint',
@@ -1884,18 +1878,22 @@ const transformers: Record<string, TransformerInformation> = {
       respond: {
         type: '(response: string | import("@discordeno/types").InteractionCallbackData, options?: { isPrivate?: boolean }) => Promise<void | Message>',
         comment: ['Sends a response to an interaction.', '@remarks', 'Uses `interaction.type`, `interaction.token` and `interaction.id`'],
+        dependencies: ['id', 'token', 'type'],
       },
       edit: {
         type: '(response: string | import("@discordeno/types").InteractionCallbackData) => Promise<Message>',
         comment: ['Edit the original response of an interaction.', '@remarks', 'Uses `interaction.token`'],
+        dependencies: ['token', 'type'],
       },
       defer: {
         type: '(isPrivate?: boolean) => Promise<void>',
         comment: ['Defer the interaction.', '@remarks', 'Uses `interaction.type`, `interaction.token` and `interaction.id`'],
+        dependencies: ['id', 'token', 'type'],
       },
       delete: {
         type: '(messageId?: import("@discordeno/types").BigString) => Promise<void>',
         comment: ['Delete the original interaction response or a followup message', '@remarks', 'Uses `interaction.type` and `interaction.token`'],
+        dependencies: ['token', 'type'],
       },
     },
   },
@@ -1927,6 +1925,7 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   interactionDataOption: {
     name: 'InteractionDataOption',
@@ -1951,6 +1950,7 @@ const transformers: Record<string, TransformerInformation> = {
         optional: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   invite: {
     name: 'Invite',
@@ -2040,7 +2040,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['The user id of the member.'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").MemberToggles',
+        type: 'import("../index.js").MemberToggles',
         optional: true,
         comment: ['The compressed form of all the boolean values on this user.'],
       },
@@ -2078,7 +2078,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['When the user started boosting the guild'],
       },
       permissions: {
-        type: 'import("@discordeno/bot").Permissions',
+        type: 'import("../index.js").Permissions',
         optional: true,
         comment: ['The permissions this member has in the guild. Only present on interaction events.'],
       },
@@ -2110,75 +2110,92 @@ const transformers: Record<string, TransformerInformation> = {
     name: 'Message',
     proprieties: {
       bitfield: {
-        type: 'import("@discordeno/bot").ToggleBitfield',
+        type: 'import("../index.js").ToggleBitfield',
         optional: true,
         comment: ['Holds all the boolean values on this message.'],
+        alwaysPresent: true,
       },
       crossposted: {
         type: 'boolean',
         comment: ['Whether this message has been published to subscribed channels (via Channel Following)'],
+        alwaysPresent: true,
       },
       ephemeral: {
         type: 'boolean',
         comment: ['Whether this message is only visible to the user who invoked the Interaction'],
+        alwaysPresent: true,
       },
       failedToMentionSomeRolesInThread: {
         type: 'boolean',
         comment: ['Whether this message failed to mention some roles and add their members to the thread'],
+        alwaysPresent: true,
       },
       flags: {
-        type: 'import("@discordeno/bot").ToggleBitfield',
+        type: 'import("../index.js").ToggleBitfield',
         optional: true,
         comment: ['Message flags combined as a bitfield'],
+        alwaysPresent: true,
       },
       hasThread: {
         type: 'boolean',
         comment: ['Whether this message has an associated thread, with the same id as the message'],
+        alwaysPresent: true,
       },
       isCrosspost: {
         type: 'boolean',
         comment: ['Whether this message originated from a message in another channel (via Channel Following)'],
+        alwaysPresent: true,
       },
       loading: {
         type: 'boolean',
         comment: ['Whether this message is an Interaction Response and the bot is "thinking"'],
+        alwaysPresent: true,
       },
       mentionedUserIds: {
         type: 'bigint',
         array: true,
         comment: ['The ids of the users who were mentioned in this message.'],
+        dependencies: ['mentions'],
       },
       mentionEveryone: {
         type: 'boolean',
         comment: ['Whether this message mentions everyone'],
+        alwaysPresent: true,
       },
       pinned: {
         type: 'boolean',
         comment: ['Whether this message is pinned'],
+        alwaysPresent: true,
       },
       sourceMessageDeleted: {
         type: 'boolean',
         comment: ['Whether the source message for this crosspost has been deleted (via Channel Following)'],
+        alwaysPresent: true,
       },
       suppressEmbeds: {
         type: 'boolean',
         comment: ['Whether do not include any embeds when serializing this message'],
+        alwaysPresent: true,
       },
       suppressNotifications: {
         type: 'boolean',
         comment: ['Whether this message will not trigger push and desktop notifications'],
+        alwaysPresent: true,
       },
       timestamp: {
         type: 'number',
         comment: ['The timestamp in milliseconds when this message was created'],
+        dependencies: ['id'],
       },
       tts: {
         type: 'boolean',
         comment: ['Whether this was a TTS message.'],
+        alwaysPresent: true,
       },
       urgent: {
         type: 'boolean',
         comment: ['Whether this message came from the urgent message system'],
+        alwaysPresent: true,
       },
       activity: {
         type: {
@@ -2530,6 +2547,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   role: {
     name: 'Role',
@@ -2591,7 +2609,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['The guild id where this role is located.'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").RoleToggles',
+        type: 'import("../index.js").RoleToggles',
         optional: true,
         comment: ['The compressed version of the boolean values on this role.'],
       },
@@ -2600,7 +2618,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['If this role is showed separately in the user listing'],
       },
       permissions: {
-        type: 'import("@discordeno/bot").Permissions',
+        type: 'import("../index.js").Permissions',
         comment: ['Permission bit set'],
       },
       managed: {
@@ -2610,30 +2628,6 @@ const transformers: Record<string, TransformerInformation> = {
       mentionable: {
         type: 'boolean',
         comment: ['Whether this role is mentionable'],
-      },
-      internalTags: {
-        type: {
-          botId: {
-            type: 'bigint',
-            optional: true,
-            comment: ['The id of the bot this role belongs to'],
-          },
-          integrationId: {
-            type: 'bigint',
-            optional: true,
-            comment: ['The id of the integration this role belongs to'],
-          },
-          subscriptionListingId: {
-            type: 'bigint',
-            optional: true,
-            comment: ["Id of this role's subscription sku and listing."],
-          },
-        },
-        optional: true,
-        comment: [
-          'Use role.tags',
-          '@deprecated this is not deprecated, but this is here to prevent users from using this as this is an internal value open to breaking changes.',
-        ],
       },
       icon: {
         type: 'bigint',
@@ -2900,6 +2894,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'bigint',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   team: {
     name: 'Team',
@@ -2935,6 +2930,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   template: {
     name: 'Template',
@@ -2975,6 +2971,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: "NonNullable<import('@discordeno/types').DiscordTemplate['serialized_source_guild']>",
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   threadMember: {
     name: 'ThreadMember',
@@ -2994,6 +2991,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'number',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   threadMemberGuildCreate: {
     name: 'ThreadMemberGuildCreate',
@@ -3002,6 +3000,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'number',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   user: {
     name: 'User',
@@ -3009,6 +3008,7 @@ const transformers: Record<string, TransformerInformation> = {
       tag: {
         type: 'string',
         comment: ['The user tag in the form of username#discriminator'],
+        dependencies: ['username', 'discriminator'],
       },
       bot: {
         type: 'boolean',
@@ -3027,7 +3027,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ['Whether the email on this account has been verified'],
       },
       toggles: {
-        type: 'import("@discordeno/bot").UserToggles',
+        type: 'import("../index.js").UserToggles',
         optional: true,
         comment: ['Compressed version of all the booleans on a user.'],
       },
@@ -3046,7 +3046,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ["The user's chosen language option"],
       },
       flags: {
-        type: 'import("@discordeno/bot").ToggleBitfield',
+        type: 'import("../index.js").ToggleBitfield',
         optional: true,
         comment: ["The flags on a user's account"],
       },
@@ -3056,7 +3056,7 @@ const transformers: Record<string, TransformerInformation> = {
         comment: ["The type of Nitro subscription on a user's account"],
       },
       publicFlags: {
-        type: 'import("@discordeno/bot").ToggleBitfield',
+        type: 'import("../index.js").ToggleBitfield',
         optional: true,
         comment: ["The public flags on a user's account"],
       },
@@ -3114,6 +3114,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'boolean',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   voiceState: {
     name: 'VoiceState',
@@ -3130,7 +3131,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'bigint',
       },
       toggles: {
-        type: 'import("@discordeno/bot").VoiceStateToggles',
+        type: 'import("../index.js").VoiceStateToggles',
       },
       sessionId: {
         type: 'string',
@@ -3139,6 +3140,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'bigint',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   webhook: {
     name: 'Webhook',
@@ -3230,6 +3232,7 @@ const transformers: Record<string, TransformerInformation> = {
         array: true,
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   guildWidget: {
     name: 'GuildWidget',
@@ -3285,6 +3288,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'number',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
   guildWidgetSettings: {
     name: 'GuildWidgetSettings',
@@ -3297,6 +3301,7 @@ const transformers: Record<string, TransformerInformation> = {
         type: 'boolean',
       },
     },
+    withoutDesiredProprietySupport: true,
   },
 }
 
@@ -3310,6 +3315,7 @@ export interface TransformerInformation {
   proprieties: Record<string, TransformerObjectProprieties>
   /** Comment for the transformer type */
   comment?: string[]
+  withoutDesiredProprietySupport?: boolean
 }
 
 /** @internal */
@@ -3322,6 +3328,10 @@ export interface TransformerObjectProprieties {
   optional?: boolean
   /** Whatever the propriety should be wrapper with `Array<...>` */
   array?: boolean
+  /** The desired proprieties this depends on */
+  dependencies?: string[]
+  /** Whatever this propriety is always present */
+  alwaysPresent?: boolean
 }
 
 /** @internal */

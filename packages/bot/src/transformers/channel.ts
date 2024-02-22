@@ -3,24 +3,7 @@ import { calculatePermissions, type Bot, type Channel } from '../index.js'
 import { Permissions } from './toggles/Permissions.js'
 import { ChannelToggles } from './toggles/channel.js'
 
-const Mask = (1n << 64n) - 1n
-
-export function packOverwrites(allow: string, deny: string, id: string, type: number): bigint {
-  return pack64(allow, 0) | pack64(deny, 1) | pack64(id, 2) | pack64(type, 3)
-}
-function unpack64(v: bigint, shift: number): bigint {
-  return (v >> BigInt(shift * 64)) & Mask
-}
-function pack64(v: string | number, shift: number): bigint {
-  const b = BigInt(v)
-  if (b < 0 || b > Mask) throw new Error('should have been a 64 bit unsigned integer: ' + v.toString())
-  return b << BigInt(shift * 64)
-}
-export function separateOverwrites(v: bigint): [number, bigint, bigint, bigint] {
-  return [Number(unpack64(v, 3)), unpack64(v, 2), unpack64(v, 0), unpack64(v, 1)] as [number, bigint, bigint, bigint]
-}
-
-export const baseChannel: Partial<Channel> = {
+export const baseChannel: Partial<Channel & InternalChannel> = {
   get archived() {
     return !!this.toggles?.archived
   },
@@ -62,7 +45,7 @@ export const baseChannel: Partial<Channel> = {
 }
 
 export function transformChannel(bot: Bot, payload: { channel: DiscordChannel } & { guildId?: BigString }): Channel {
-  const channel = Object.create(baseChannel) as Channel
+  const channel: Channel & InternalChannel = Object.create(baseChannel)
   const props = bot.transformers.desiredProperties.channel
   channel.toggles = new ChannelToggles(payload.channel)
 
@@ -84,7 +67,8 @@ export function transformChannel(bot: Bot, payload: { channel: DiscordChannel } 
   if (props.messageCount) channel.messageCount = payload.channel.message_count
   if (props.memberCount) channel.memberCount = payload.channel.member_count
   if (props.archiveTimestamp || props.createTimestamp || props.autoArchiveDuration) {
-    channel.internalThreadMetadata = {} as NonNullable<Channel['internalThreadMetadata']>
+    channel.internalThreadMetadata = {}
+
     if (props.archiveTimestamp && payload.channel.thread_metadata?.archive_timestamp)
       channel.internalThreadMetadata.archiveTimestamp = Date.parse(payload.channel.thread_metadata.archive_timestamp)
     if (props.createTimestamp && payload.channel.thread_metadata?.create_timestamp)
@@ -101,4 +85,34 @@ export function transformChannel(bot: Bot, payload: { channel: DiscordChannel } 
   if (props.parentId && payload.channel.parent_id) channel.parentId = bot.transformers.snowflake(payload.channel.parent_id)
 
   return bot.transformers.customizers.channel(bot, payload.channel, channel)
+}
+
+const Mask = (1n << 64n) - 1n
+
+export function packOverwrites(allow: string, deny: string, id: string, type: number): bigint {
+  return pack64(allow, 0) | pack64(deny, 1) | pack64(id, 2) | pack64(type, 3)
+}
+
+export function separateOverwrites(v: bigint): [number, bigint, bigint, bigint] {
+  return [Number(unpack64(v, 3)), unpack64(v, 2), unpack64(v, 0), unpack64(v, 1)]
+}
+
+function unpack64(v: bigint, shift: number): bigint {
+  return (v >> BigInt(shift * 64)) & Mask
+}
+
+function pack64(v: string | number, shift: number): bigint {
+  const b = BigInt(v)
+  if (b < 0 || b > Mask) throw new Error('should have been a 64 bit unsigned integer: ' + v.toString())
+  return b << BigInt(shift * 64)
+}
+
+/** @internal */
+interface InternalChannel {
+  internalOverwrites: bigint[]
+  internalThreadMetadata: {
+    archiveTimestamp?: number
+    createTimestamp?: number
+    autoArchiveDuration?: 60 | 1440 | 4320 | 10080
+  }
 }

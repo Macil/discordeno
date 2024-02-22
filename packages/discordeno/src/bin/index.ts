@@ -6,13 +6,16 @@ const program = new Command()
 
 program.name('discordeno').description('CLI to discordeno utilities').version('0.1.0')
 
-testDesiredProprieties('unionNever')
+if (process.env.TESTING_DISABLE_DESIRED_PROPRIETIES !== 'true') {
+  testDesiredProprieties('unionNever')
+  checkForProprietyDependencies('unionNever')
+}
 
 program
   .command('generate')
   .description('Generate types/schema for discordeno')
   .action(async () => {
-    const file = createWriteStream('transformers.generated.ts', { encoding: 'utf-8' })
+    const file = createWriteStream('../bot/src/transformers/transformers.test.generated.ts', { encoding: 'utf-8' })
 
     file.write('/* eslint-disable */\n')
     file.write('/* prettier-ignore */\n')
@@ -99,6 +102,8 @@ interface ParseProprietyOptions {
 // TODO: source the desiredProprieties from somewhere
 function testDesiredProprieties(mode: 'delete' | 'typeOptional' | 'typeNever' | 'unionNever'): void {
   for (const structure of Object.values(transformers)) {
+    if (structure.withoutDesiredProprietySupport) continue
+
     structure.comment ??= []
     structure.comment.push(
       '@remarks',
@@ -106,13 +111,13 @@ function testDesiredProprieties(mode: 'delete' | 'typeOptional' | 'typeNever' | 
       'To enable these propriety you need to update your desiredProprieties configuration and re-generate the typings',
     )
 
-    for (const name of Object.keys(structure.proprieties)) {
+    for (const [key, prop] of Object.entries(structure.proprieties)) {
+      if (!!prop.alwaysPresent || !!prop.dependencies) continue
+
       if (mode === 'delete') {
-        Reflect.deleteProperty(structure.proprieties, name)
+        Reflect.deleteProperty(structure.proprieties, key)
         continue
       }
-
-      const prop = structure.proprieties[name]
 
       prop.comment ??= []
       prop.comment.push(
@@ -131,10 +136,68 @@ function testDesiredProprieties(mode: 'delete' | 'typeOptional' | 'typeNever' | 
       }
 
       if (mode === 'unionNever') {
-        if (!Array.isArray(prop.type)) {
-          if (typeof prop.type === 'string') prop.type = [prop.type]
-          else prop.type = [{ type: prop.type, array: prop.array }]
+        if (!Array.isArray(prop.type)) prop.type = [{ type: prop.type, array: prop.array }]
+
+        prop.type.push('never')
+        continue
+      }
+    }
+  }
+}
+
+function checkForProprietyDependencies(mode: 'delete' | 'typeOptional' | 'typeNever' | 'unionNever'): void {
+  for (const structure of Object.values(transformers)) {
+    if (structure.withoutDesiredProprietySupport) continue
+
+    for (const [key, prop] of Object.entries(structure.proprieties)) {
+      if (!prop.dependencies) continue
+
+      // TODO: Replace function with a proper lookup on the desiredProprieties list (when implemented). Related to the FIXME below, and TODO in testDesiredProprieties
+      const areDependenciesEnabled = prop.dependencies.every((dep) => {
+        const prop = structure.proprieties[dep]
+
+        if (!prop) {
+          if (mode !== 'delete') throw new Error('The declared dependency does not exist')
+
+          // The propriety is disabled, so deleted according to the mode
+          return false
         }
+
+        if (mode === 'typeNever') return prop.type !== 'never'
+
+        // FIXME: Considering discord can make propriety optional according to their api responses this needs to check against the list of desiredProprieties
+        if (mode === 'typeOptional') return true
+
+        if (mode === 'unionNever' && Array.isArray(prop.type)) return !prop.type.includes('never')
+
+        return false
+      })
+
+      if (areDependenciesEnabled) continue
+
+      if (mode === 'delete') {
+        Reflect.deleteProperty(structure.proprieties, key)
+        continue
+      }
+
+      prop.comment ??= []
+      prop.comment.push(
+        '@remarks',
+        `This propriety has been disabled via desiredProprieties. This propriety depends on ${prop.dependencies.map((x) => `{@link ${x}}`).join(',')}. If you don't enable it's dependencies, this propriety won't have a value at runtime`,
+      )
+
+      if (mode === 'typeOptional') {
+        prop.optional = true
+        continue
+      }
+
+      if (mode === 'typeNever') {
+        prop.type = 'never'
+        continue
+      }
+
+      if (mode === 'unionNever') {
+        if (!Array.isArray(prop.type)) prop.type = [{ type: prop.type, array: prop.array }]
 
         prop.type.push('never')
         continue

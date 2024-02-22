@@ -384,7 +384,7 @@ export interface Channel {
   /**
    * The compressed form of all the boolean values on this channel.
    */
-  toggles: import('@discordeno/bot').ChannelToggles
+  toggles: import('../index.js').ChannelToggles
   /**
    * The type of channel
    */
@@ -450,25 +450,6 @@ export interface Channel {
    */
   memberCount?: number
   /**
-   * Thread-specific fields not needed by other channels.
-   * @deprecated Use channel.threadMetadata
-   * @private This field is an internal field, subject to breaking changes.
-   */
-  internalThreadMetadata?: {
-    /**
-     * Timestamp when the thread's archive status was last changed, used for calculating recent activity
-     */
-    archiveTimestamp: number
-    /**
-     * Timestamp when the thread was created; only populated for threads created after 2022-01-09
-     */
-    createTimestamp?: number
-    /**
-     * Duration in minutes to automatically archive the thread after recent activity
-     */
-    autoArchiveDuration: 60 | 1440 | 4320 | 10080
-  }
-  /**
    * Thread member object for the current user, if they have joined the thread, only included on certain API endpoints
    */
   member?: import('@discordeno/types').DiscordThreadMember
@@ -479,23 +460,19 @@ export interface Channel {
   /**
    * computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction. This does not include implicit permissions, which may need to be checked separately.
    */
-  permissions?: import('@discordeno/bot').Permissions
+  permissions?: import('../index.js').Permissions
   /**
    * The flags of the channel
    */
   flags?: number
-  /**
-   * Explicit permission overwrites for members and roles
-   * @deprecated Use channel.permissionOverwrites
-   * @private This is for internal use only, and prone to breaking changes.
-   */
-  internalOverwrites?: Array<bigint>
   /**
    * Whether the channel is nsfw
    */
   nsfw: boolean
   /**
    * Thread-specific fields not needed by other channels
+   * @remarks
+   * Some of the proprieties, in the specific `archiveTimestamp`, `createTimestamp` and `autoArchiveDuration`, need to be explicitly enabled the following desired proprieties
    */
   threadMetadata?: {
     /**
@@ -709,7 +686,7 @@ export interface Emoji {
    * Whether this emoji can be used, may be false due to loss of Server Boosts
    */
   available?: boolean
-  toggles: import('@discordeno/bot').EmojiToggles
+  toggles: import('../index.js').EmojiToggles
 }
 
 export interface Entitlement {
@@ -831,7 +808,7 @@ export interface Guild {
    * The description of a guild
    */
   description?: string
-  toggles: import('@discordeno/bot').GuildToggles
+  toggles: import('../index.js').GuildToggles
   shardId: number
   /**
    * Premium tier (Server Boost level)
@@ -1008,7 +985,7 @@ export interface Interaction {
   /**
    * The bot object
    */
-  bot: import('@discordeno/bot').Bot
+  bot: import('../index.js').Bot
   /**
    * Whether or not this interaction has been responded to.
    */
@@ -1211,7 +1188,7 @@ export interface Member {
   /**
    * The compressed form of all the boolean values on this user.
    */
-  toggles?: import('@discordeno/bot').MemberToggles
+  toggles?: import('../index.js').MemberToggles
   /**
    * The guild id where this member is.
    */
@@ -1243,7 +1220,7 @@ export interface Member {
   /**
    * The permissions this member has in the guild. Only present on interaction events.
    */
-  permissions?: import('@discordeno/bot').Permissions
+  permissions?: import('../index.js').Permissions
   /**
    * when the user's timeout will expire and the user will be able to communicate in the guild again (set null to remove timeout), null or a time in the past if the user is not timed out
    */
@@ -1266,7 +1243,7 @@ export interface Message {
   /**
    * Holds all the boolean values on this message.
    */
-  bitfield?: import('@discordeno/bot').ToggleBitfield
+  bitfield?: import('../index.js').ToggleBitfield
   /**
    * Whether this message has been published to subscribed channels (via Channel Following)
    */
@@ -1282,7 +1259,7 @@ export interface Message {
   /**
    * Message flags combined as a bitfield
    */
-  flags?: import('@discordeno/bot').ToggleBitfield
+  flags?: import('../index.js').ToggleBitfield
   /**
    * Whether this message has an associated thread, with the same id as the message
    */
@@ -1659,7 +1636,7 @@ export interface Role {
   /**
    * The compressed version of the boolean values on this role.
    */
-  toggles?: import('@discordeno/bot').RoleToggles
+  toggles?: import('../index.js').RoleToggles
   /**
    * If this role is showed separately in the user listing
    */
@@ -1667,7 +1644,7 @@ export interface Role {
   /**
    * Permission bit set
    */
-  permissions: import('@discordeno/bot').Permissions
+  permissions: import('../index.js').Permissions
   /**
    * Whether this role is managed by an integration
    */
@@ -1676,24 +1653,6 @@ export interface Role {
    * Whether this role is mentionable
    */
   mentionable: boolean
-  /**
-   * Use role.tags
-   * @deprecated this is not deprecated, but this is here to prevent users from using this as this is an internal value open to breaking changes.
-   */
-  internalTags?: {
-    /**
-     * The id of the bot this role belongs to
-     */
-    botId?: bigint
-    /**
-     * The id of the integration this role belongs to
-     */
-    integrationId?: bigint
-    /**
-     * Id of this role's subscription sku and listing.
-     */
-    subscriptionListingId?: bigint
-  }
   /**
    * the role emoji hash
    */
@@ -1975,7 +1934,7 @@ export interface User {
   /**
    * Compressed version of all the booleans on a user.
    */
-  toggles?: import('@discordeno/bot').UserToggles
+  toggles?: import('../index.js').UserToggles
   /**
    * The user's username, not unique across the platform
    */
@@ -1991,7 +1950,7 @@ export interface User {
   /**
    * The flags on a user's account
    */
-  flags?: import('@discordeno/bot').ToggleBitfield
+  flags?: import('../index.js').ToggleBitfield
   /**
    * The type of Nitro subscription on a user's account
    */
@@ -1999,7 +1958,7 @@ export interface User {
   /**
    * The public flags on a user's account
    */
-  publicFlags?: import('@discordeno/bot').ToggleBitfield
+  publicFlags?: import('../index.js').ToggleBitfield
   /**
    * the user's banner color encoded as an integer representation of hexadecimal color code
    */
@@ -2042,7 +2001,7 @@ export interface VoiceState {
   requestToSpeakTimestamp?: number
   channelId?: bigint
   guildId: bigint
-  toggles: import('@discordeno/bot').VoiceStateToggles
+  toggles: import('../index.js').VoiceStateToggles
   sessionId: string
   userId: bigint
 }
