@@ -1877,22 +1877,22 @@ const transformers: Record<string, TransformerInformation> = {
       },
       respond: {
         type: '(response: string | import("@discordeno/types").InteractionCallbackData, options?: { isPrivate?: boolean }) => Promise<void | Message>',
-        comment: ['Sends a response to an interaction.', '@remarks', 'Uses `interaction.type`, `interaction.token` and `interaction.id`'],
+        comment: ['Sends a response to an interaction.'],
         dependencies: ['id', 'token', 'type'],
       },
       edit: {
         type: '(response: string | import("@discordeno/types").InteractionCallbackData) => Promise<Message>',
-        comment: ['Edit the original response of an interaction.', '@remarks', 'Uses `interaction.token`'],
+        comment: ['Edit the original response of an interaction.'],
         dependencies: ['token', 'type'],
       },
       defer: {
         type: '(isPrivate?: boolean) => Promise<void>',
-        comment: ['Defer the interaction.', '@remarks', 'Uses `interaction.type`, `interaction.token` and `interaction.id`'],
+        comment: ['Defer the interaction.'],
         dependencies: ['id', 'token', 'type'],
       },
       delete: {
         type: '(messageId?: import("@discordeno/types").BigString) => Promise<void>',
-        comment: ['Delete the original interaction response or a followup message', '@remarks', 'Uses `interaction.type` and `interaction.token`'],
+        comment: ['Delete the original interaction response or a followup message'],
         dependencies: ['token', 'type'],
       },
     },

@@ -183,7 +183,7 @@ function checkForProprietyDependencies(mode: 'delete' | 'typeOptional' | 'typeNe
       prop.comment ??= []
       prop.comment.push(
         '@remarks',
-        `This propriety has been disabled via desiredProprieties. This propriety depends on ${prop.dependencies.map((x) => `{@link ${x}}`).join(',')}. If you don't enable it's dependencies, this propriety won't have a value at runtime`,
+        `This propriety has been disabled via desiredProprieties. This propriety depends on ${prop.dependencies.map((x) => `{@link ${x}}`).join(', ')}. If you don't enable it's dependencies, this propriety won't have a value at runtime`,
       )
 
       if (mode === 'typeOptional') {
