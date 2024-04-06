@@ -1,15 +1,13 @@
 import {
   InteractionResponseTypes,
   InteractionTypes,
-  type BigString,
   type ChannelTypes,
   type DiscordInteraction,
   type DiscordInteractionDataOption,
-  type InteractionCallbackData,
 } from '@discordeno/types'
 import { Collection } from '@discordeno/utils'
 import type { Bot, DiscordChannel, Interaction, InteractionDataOption, InteractionDataResolved, Member, Message } from '../index.js'
-import type { DiscordInteractionDataResolved } from '../typings.js'
+import { MessageFlags, type DiscordInteractionDataResolved } from '../typings.js'
 
 const baseInteraction: Partial<Interaction> = {
   async respond(response, options) {
@@ -17,12 +15,11 @@ const baseInteraction: Partial<Interaction> = {
 
     // If user provides a string, change it to a response object
     if (typeof response === 'string') response = { content: response }
-    // If user provides an object, determine if it should be an autocomplete or a modal response
-    else if (response.title) type = InteractionResponseTypes.Modal
-    else if (this.type === InteractionTypes.ApplicationCommandAutocomplete) type = InteractionResponseTypes.ApplicationCommandAutocompleteResult
 
-    // If user wants to send a private message
-    if (type === InteractionResponseTypes.ChannelMessageWithSource && options?.isPrivate) response.flags = 64
+    // If user provides an object, determine if it should be an autocomplete or a modal response
+    if (response.title) type = InteractionResponseTypes.Modal
+    if (this.type === InteractionTypes.ApplicationCommandAutocomplete) type = InteractionResponseTypes.ApplicationCommandAutocompleteResult
+    if (type === InteractionResponseTypes.ChannelMessageWithSource && options?.isPrivate) response.flags = MessageFlags.Ephemeral
 
     // Since this has already been given a response, any further responses must be followups.
     if (this.acknowledged) return await this.bot!.helpers.sendFollowupMessage(this.token!, response)
@@ -31,43 +28,57 @@ const baseInteraction: Partial<Interaction> = {
     if (this.type === InteractionTypes.ModalSubmit && type === InteractionResponseTypes.Modal)
       throw new Error('Cannot respond to a modal interaction with another modal.')
 
-    // Autocomplete response can only be used for autocomplete interactions
-    if (this.type === InteractionTypes.ApplicationCommandAutocomplete && type !== InteractionResponseTypes.ApplicationCommandAutocompleteResult)
-      throw new Error('Cannot respond to an autocomplete interaction with a modal or message.')
-
-    // If user has not already responded to this interaction we need to send an original response
     this.acknowledged = true
     return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, { type, data: response })
   },
-
-  async edit(response) {
-    if (this.type === InteractionTypes.ApplicationCommandAutocomplete) throw new Error('Cannot edit an autocomplete interaction')
+  async edit(response, messageId) {
+    if (this.type === InteractionTypes.ApplicationCommandAutocomplete) throw new Error('Cannot edit an autocomplete interaction.')
 
     // If user provides a string, change it to a response object
     if (typeof response === 'string') response = { content: response }
 
+    if (messageId) {
+      return await this.bot?.helpers.editFollowupMessage(this.token!, messageId, response)
+    }
+
+    if (!this.acknowledged) {
+      if (this.type !== InteractionTypes.MessageComponent)
+        throw new Error("This interaction has not been responded to yet and this isn't a MessageComponent interaction.")
+
+      this.acknowledged = true
+      return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, { type: InteractionResponseTypes.UpdateMessage, data: response })
+    }
+
     return await this.bot!.helpers.editOriginalInteractionResponse(this.token!, response)
   },
+  async deferEdit() {
+    if (this.type === InteractionTypes.ApplicationCommandAutocomplete) throw new Error('Cannot edit an autocomplete interaction.')
+    if (this.acknowledged) throw new Error('Cannot defer an already responded interaction.')
 
-  async defer(isPrivate) {
-    if (this.type === InteractionTypes.ApplicationCommandAutocomplete) throw new Error('Cannot defer an autocomplete interaction')
-    if (this.acknowledged) throw new Error('Cannot defer an already responded interaction')
-
-    // Determine the type of defer response
-    const type =
-      this.type === InteractionTypes.MessageComponent
-        ? InteractionResponseTypes.DeferredUpdateMessage
-        : InteractionResponseTypes.DeferredChannelMessageWithSource
-
-    // If user wants to send a private message
-    const data: InteractionCallbackData = {}
-    if (isPrivate) data.flags = 64
+    if (this.type !== InteractionTypes.MessageComponent)
+      throw new Error("Cannot defer to then edit an interaction that isn't a MessageComponent interaction.")
 
     this.acknowledged = true
-    return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, { type, data })
+    return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, { type: InteractionResponseTypes.DeferredUpdateMessage })
   },
+  async defer(isPrivate) {
+    if (this.acknowledged) throw new Error('Cannot defer an already responded interaction.')
 
-  async delete(messageId?: BigString) {
+    this.acknowledged = true
+    return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, {
+      type: InteractionResponseTypes.DeferredChannelMessageWithSource,
+      data: {
+        flags: isPrivate ? MessageFlags.Ephemeral : undefined,
+      },
+    })
+  },
+  async premiumRequired() {
+    if (this.acknowledged) throw new Error('Cannot respond to an already responded interaction.')
+
+    this.acknowledged = true
+    return await this.bot!.helpers.sendInteractionResponse(this.id!, this.token!, { type: InteractionResponseTypes.PremiumRequired })
+  },
+  async delete(messageId) {
     if (this.type === InteractionTypes.ApplicationCommandAutocomplete) throw new Error('Cannot delete an autocomplete interaction')
 
     if (messageId) return await this.bot?.helpers.deleteFollowupMessage(this.token!, messageId)

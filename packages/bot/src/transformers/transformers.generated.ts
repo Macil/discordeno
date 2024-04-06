@@ -1065,28 +1065,50 @@ export interface Interaction {
   appPermissions: bigint
   /**
    * Sends a response to an interaction.
+   *
    * @remarks
-   * Uses `interaction.type`, `interaction.token` and `interaction.id`
+   * This will send a {@link InteractionResponseTypes.ChannelMessageWithSource}, {@link InteractionResponseTypes.ApplicationCommandAutocompleteResult} or {@link InteractionResponseTypes.Modal} response based on the type of the interaction you are responding to.
+   *
+   * If the interaction has been already acknowledged, indicated by {@link Interaction.acknowledged}, it will send a followup message instead.
    */
-  respond: (response: string | import('@discordeno/types').InteractionCallbackData, options?: { isPrivate?: boolean }) => Promise<void | Message>
+  respond: (response: string | import('@discordeno/types').InteractionCallbackData, options?: { isPrivate?: boolean }) => Promise<Message | void>
   /**
-   * Edit the original response of an interaction.
+   * Edit the original response of an interaction or a followup if the message id is provided.
+   *
    * @remarks
-   * Uses `interaction.token`
+   * This will edit the original interaction response or, if the interaction has not yet been acknowledged and the type of the interaction is {@link InteractionTypes.MessageComponent} it will instead send a {@link InteractionResponseTypes.UpdateMessage} response instead.
    */
-  edit: (response: string | import('@discordeno/types').InteractionCallbackData) => Promise<Message>
+  edit: (
+    response: string | import('@discordeno/types').InteractionCallbackData,
+    messageId?: import('@discordeno/types').BigString,
+  ) => Promise<Message | void>
   /**
-   * Defer the interaction.
+   * Defer the interaction for updating the referenced message at a later time with {@link edit}.
+   *
    * @remarks
-   * Uses `interaction.type`, `interaction.token` and `interaction.id`
+   * This will send a {@link InteractionResponseTypes.DeferredUpdateMessage} response.
+   */
+  deferEdit: () => Promise<void>
+  /**
+   * Defer the interaction for updating the response at a later time with {@link edit}.
+   *
+   * @remarks
+   * This will send a {@link InteractionResponseTypes.DeferredChannelMessageWithSource} response.
    */
   defer: (isPrivate?: boolean) => Promise<void>
   /**
-   * Delete the original interaction response or a followup message
-   * @remarks
-   * Uses `interaction.type` and `interaction.token`
+   * Delete the original interaction response or a followup if the message id is provided.
    */
   delete: (messageId?: import('@discordeno/types').BigString) => Promise<void>
+  /**
+   * Sends a response with an upgrade button.
+   *
+   * @remarks
+   * This will send a {@link InteractionResponseTypes.PremiumRequired} response.
+   *
+   * This can be used only with applications that have monetization enabled.
+   */
+  premiumRequired: () => Promise<void>
 }
 
 export interface InteractionDataResolved {

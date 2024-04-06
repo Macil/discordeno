@@ -128,13 +128,14 @@ import type {
   UpsertGlobalApplicationCommandOptions,
   UpsertGuildApplicationCommandOptions,
 } from '@discordeno/types'
+import type { logger } from '@discordeno/utils'
 import type { InvalidRequestBucket } from './invalidBucket.js'
 import type { Queue } from './queue.js'
 import type { RestRoutes } from './typings/routes.js'
 
 export interface CreateRestManagerOptions {
   /** The bot token which will be used to make requests. */
-  token?: string
+  token: string
   /**
    * For old bots that have a different bot id and application id.
    * @default bot id from token
@@ -166,11 +167,16 @@ export interface CreateRestManagerOptions {
    * @default 10
    */
   version?: ApiVersions
+  /**
+   * The logger that the rest manager will use
+   * @default logger // The logger exported by `@discordeno/utils`
+   */
+  logger?: Pick<typeof logger, 'debug' | 'info' | 'warn' | 'error' | 'fatal'>
 }
 
 export interface RestManager {
   /** The bot token which will be used to make requests. */
-  token?: string
+  token: string
   /** The application id. Normally this is not required for recent bots but old bot's application id is sometimes different from the bot id so it is required for those bots. */
   applicationId: bigint
   /** The api version to use when making requests. Only the latest supported version will be tested. */
@@ -207,6 +213,8 @@ export interface RestManager {
   invalidBucket: InvalidRequestBucket
   /** The routes that are available for this manager. */
   routes: RestRoutes
+  /** The logger to use for the rest manager */
+  logger: Pick<typeof logger, 'debug' | 'info' | 'warn' | 'error' | 'fatal'>
   /** Allows the user to inject custom headers that will be sent with every request. */
   createBaseHeaders: () => Record<string, string>
   /** Whether or not the rest manager should keep objects in raw snake case from discord. */
