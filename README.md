@@ -1,14 +1,14 @@
-# Discordeno
+# Discordeno_patched
 
-<img align="right" src="https://raw.githubusercontent.com/discordeno/discordeno/main/site/static/img/logo.png" height="150px">
+**This is a fork of the original Discordeno library with some bugfixes.**
 
 Discord API library for [Deno](https://deno.land)
 
 Discordeno follows [semantic versioning](https://semver.org/)
 
 [![Discord](https://img.shields.io/discord/785384884197392384?color=7289da&logo=discord&logoColor=dark)](https://discord.com/invite/5vBgXk3UcZ)
-![Test](https://github.com/discordeno/discordeno/workflows/Test/badge.svg)
-[![Coverage](https://img.shields.io/codecov/c/gh/discordeno/discordeno)](https://codecov.io/gh/discordeno/discordeno)
+![Test](https://github.com/Macil/discordeno/workflows/Test/badge.svg)
+[![Coverage](https://img.shields.io/codecov/c/gh/Macil/discordeno)](https://codecov.io/gh/Macil/discordeno)
 
 ## Features
 
@@ -24,6 +24,7 @@ Discordeno is actively maintained to guarantee **excellent performance and ease.
 - **Plugins:** Designed to allow you to overwrite any portion of the code with your own code. Never go through the
   hassle of maintaining your fork in order to acquire something that is specifically tailored to your requirements.
   Plugins may be used for nearly anything; for instance, we have a few authorised plugins.
+
   - A caching plugin that makes anything cacheable.
   - A plugin for sweepers that allows them to periodically clear the cache.
   - The permission plugin internally verifies any missing permissions before sending a call to the Discord API to
@@ -63,7 +64,7 @@ Discordeno is actively maintained to guarantee **excellent performance and ease.
     that was spread across 200,000 servers, restarting it after making a simple modification would take 20 minutes.
 - **Zero Downtime Resharding:**
   - At various periods in time, Discord stops allowing your bot to be added to new servers. Consider 150 shards
-    operating on 150,000 servers, for instance. Your shards may support a maximum of 150 * 2500 = 375,000 servers. Your
+    operating on 150,000 servers, for instance. Your shards may support a maximum of 150 \* 2500 = 375,000 servers. Your
     bot will be unable to join new servers once it reaches this point until it re-shards.
   - DD proxy provides 2 types of re-sharding. Automated and manual. You can also have both.
     - Automated: This system will automatically begin a Zero-downtime resharding process behind the scenes when you
@@ -102,7 +103,7 @@ Have your cache setup in any way you like. Redis, PGSQL or any cache layer you w
 Here is a minimal example to get started with:
 
 ```typescript
-import { createBot, Intents, startBot } from "https://deno.land/x/discordeno@13.0.0/mod.ts";
+import { createBot, Intents, startBot } from "https://deno.land/x/discordeno_patched/mod.ts";
 
 const bot = createBot({
   token: Deno.env.get("DISCORD_TOKEN"),
