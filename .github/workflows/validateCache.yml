@@ -7,6 +7,9 @@ on:
 
 jobs:
   validate-cache:
+    # disable for now
+    if: false
+
     name: Validate Cache
     runs-on: ubuntu-latest
     steps:

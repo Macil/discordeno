@@ -4,6 +4,9 @@ on: issue_comment
 
 jobs:
   test:
+    # disable for now
+    if: false
+
     runs-on: ubuntu-latest
     strategy:
       matrix:

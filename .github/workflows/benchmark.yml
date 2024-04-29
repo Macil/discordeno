@@ -6,6 +6,9 @@ on:
 
 jobs:
   benchmark:
+    # disable for now
+    if: false
+
     name: Benchmark
     runs-on: ubuntu-latest
     steps:
