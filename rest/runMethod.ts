@@ -39,7 +39,7 @@ export async function runMethod<T = any>(
       // convert blobs to string before sending to proxy
       body.file = await Promise.all(
         body.file.map(async (f: FileContent) => {
-          const url = encode(await (f.blob).arrayBuffer());
+          const url = encode(await f.blob.arrayBuffer());
 
           return { name: f.name, blob: `data:${f.blob.type};base64,${url}` };
         }),

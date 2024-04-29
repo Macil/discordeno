@@ -27,6 +27,6 @@ client.commands.load({});
 Discord.startBot(client);
 
 /*
-* You should handle all errors and fix the issues in your codes...
-* process.on('unhandledRejection', (reason, p) => {console.log(reason, p)})
-*/
+ * You should handle all errors and fix the issues in your codes...
+ * process.on('unhandledRejection', (reason, p) => {console.log(reason, p)})
+ */
