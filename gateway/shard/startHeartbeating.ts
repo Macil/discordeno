@@ -18,8 +18,11 @@ export function startHeartbeating(shard: Shard, interval: number) {
   // Reference: https://discord.com/developers/docs/topics/gateway#heartbeating
   const jitter = Math.ceil(shard.heart.interval * (Math.random() || 0.5));
   shard.heart.timeoutId = setTimeout(() => {
+    if (shard.socket?.readyState !== WebSocket.OPEN) {
+      return;
+    }
     // Using a direct socket.send call here because heartbeat requests are reserved by us.
-    shard.socket?.send(JSON.stringify({
+    shard.socket.send(JSON.stringify({
       op: GatewayOpcodes.Heartbeat,
       d: shard.previousSequenceNumber,
     }));
@@ -46,10 +49,14 @@ export function startHeartbeating(shard: Shard, interval: number) {
         return await shard.identify();
       }
 
+      if (shard.socket?.readyState !== WebSocket.OPEN) {
+        return;
+      }
+
       shard.heart.acknowledged = false;
 
       // Using a direct socket.send call here because heartbeat requests are reserved by us.
-      shard.socket?.send(
+      shard.socket.send(
         JSON.stringify({
           op: GatewayOpcodes.Heartbeat,
           d: shard.previousSequenceNumber,
