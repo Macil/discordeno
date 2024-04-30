@@ -7,7 +7,10 @@ import { GATEWAY_RATE_LIMIT_RESET_INTERVAL, Shard, ShardState } from "./types.ts
 
 const decoder = new TextDecoder();
 
-export async function handleMessage(shard: Shard, message: MessageEvent<any>): Promise<void> {
+export async function handleMessage(
+  shard: Shard,
+  message: MessageEvent<any>,
+): Promise<void> {
   message = message.data;
 
   // If message compression is enabled,
@@ -116,18 +119,21 @@ export async function handleMessage(shard: Shard, message: MessageEvent<any>): P
   }
 
   if (messageData.t === "RESUMED") {
+    if (!shard.isOpen()) return;
     // gateway.debug("GW RESUMED", { shardId });
 
     shard.state = ShardState.Connected;
     shard.events.resumed?.(shard);
 
     // Continue the requests which have been queued since the shard went offline.
-    shard.offlineSendQueue.map((resolve) => resolve());
+    shard.offlineSendQueue.forEach((resolve) => resolve());
+    shard.offlineSendQueue.length = 0;
 
     shard.resolves.get("RESUMED")?.(messageData);
     shard.resolves.delete("RESUMED");
   } // Important for future resumes.
   else if (messageData.t === "READY") {
+    if (!shard.isOpen()) return;
     const payload = messageData.d as DiscordReady;
 
     shard.resumeGatewayUrl = payload.resume_gateway_url;
@@ -137,7 +143,8 @@ export async function handleMessage(shard: Shard, message: MessageEvent<any>): P
 
     // Continue the requests which have been queued since the shard went offline.
     // Important when this is a re-identify
-    shard.offlineSendQueue.map((resolve) => resolve());
+    shard.offlineSendQueue.forEach((resolve) => resolve());
+    shard.offlineSendQueue.length = 0;
 
     shard.resolves.get("READY")?.(messageData);
     shard.resolves.delete("READY");
